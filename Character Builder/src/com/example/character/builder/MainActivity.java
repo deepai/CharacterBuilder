@@ -15,6 +15,8 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +37,8 @@ import android.widget.AdapterView.OnItemClickListener;
 public class MainActivity extends Activity {
 
 
+	int height;
+	int width;
 	ListView StrokeClassDisplay;
 	ImageView bg;
 	GestureOverlayView drawingsurface;
@@ -45,10 +49,10 @@ public class MainActivity extends Activity {
 	ArrayList<String> list=new ArrayList<String>();
 	ArrayAdapter<String> listconnector;
 	String menuItem="delete";
-	String filename="/mnt/sdcard/Library.dat";
+	String filename="/mnt/sdcard/Library_CHARACTER.dat";
 	TextView listCount;
 	HashMap<String,Gesture> library; //load the library
-	int[] colors={Color.RED,Color.BLACK,Color.BLUE,Color.YELLOW,Color.GREEN,Color.CYAN,Color.MAGENTA,Color.WHITE};
+	int[] colors={Color.RED,Color.GRAY,Color.BLUE,Color.YELLOW,Color.GREEN,Color.CYAN,Color.MAGENTA,Color.WHITE};
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,12 +83,18 @@ public class MainActivity extends Activity {
         
         drawingsurface=(GestureOverlayView) findViewById(R.id.gestureOverlayView1); //drawing surface
         drawingsurface.setGestureColor(Color.CYAN);
+        /*
+         * 
+         */
+        ///
+        
         newClass=(Button) findViewById(R.id.button1); //Button to draw a new interface
         newClass.setTextColor(Color.WHITE);
        Save=(Button) findViewById(R.id.button2); //save and update 
         Exit=(Button) findViewById(R.id.button3); //exit button 
         Classname=(EditText) findViewById(R.id.editText1); //enter the name of the class here
         bg=(ImageView) findViewById(R.id.imageView1);
+        
        
         Exit.setOnClickListener(new OnClickListener() {
 			
@@ -195,14 +205,19 @@ public class MainActivity extends Activity {
 				String temp=list.get(arg2);
 				Gesture tp=library.get(temp);
 				Paint pt=new Paint();
-				pt.setStrokeWidth(3);
-				Bitmap bp=Bitmap.createBitmap(400,400,Bitmap.Config.ARGB_8888);
+				pt.setStrokeWidth(4);
+				//
+		        height=bg.getMeasuredHeight();
+		        width=bg.getMeasuredWidth();
+		        //
+				Bitmap bp=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
 				Canvas ct=new Canvas(bp);
 				for(int i=0;i<tp.getStrokesCount();i++)
 				{
-        	 		float[] Stroke=tp.getStrokes().get(i).points;
+        	 		Path p=tp.getStrokes().get(i).getPath();
         	 		pt.setColor(colors[i]);
-        	 		ct.drawPoints(Stroke, pt);
+        	 		pt.setStyle(Style.STROKE);
+        	 		ct.drawPath(p, pt);
 				}
          	
 				bg.setImageBitmap(bp);
