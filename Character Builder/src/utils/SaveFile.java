@@ -3,13 +3,14 @@ package utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.gesture.Gesture;
 
 public class SaveFile {
 
-	public static int WriteFile(String name,HashMap<String,Gesture> Map) 
+	public static int WriteFile(String name,HashMap<String,ArrayList<float[]>> Map) 
 	{
 		int t=0;
 		try{

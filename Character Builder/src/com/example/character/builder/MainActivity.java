@@ -51,13 +51,14 @@ public class MainActivity extends Activity {
 	String menuItem="delete";
 	String filename="/mnt/sdcard/Library_CHARACTER.dat";
 	TextView listCount;
-	HashMap<String,Gesture> library; //load the library
+	HashMap<String,ArrayList<float[]>> library; //load the library
 	int[] colors={Color.RED,Color.GRAY,Color.BLUE,Color.YELLOW,Color.GREEN,Color.CYAN,Color.MAGENTA,Color.WHITE};
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try{
+        	
         	library=Strokesloader.loadStrokes(filename);
         }catch (Exception e)
         {
@@ -71,7 +72,7 @@ public class MainActivity extends Activity {
         StrokeClassDisplay.setAdapter(listconnector);
         
         if(library==null)
-        	library=new HashMap<String,Gesture>();
+        	library=new HashMap<String,ArrayList<float[]>>();
         else
         {
         	list.clear();
@@ -161,8 +162,12 @@ public class MainActivity extends Activity {
 				{
 					//float[] temp=preprocessing.Scaling.scale(g.getStrokes().get(0).points);
 					//temp=preprocessing.smoothing.smoothFunction(temp);
-					
-					library.put(name,g);
+					ArrayList<float[]> stroke=new ArrayList<float[]>();
+					for(int i=0;i<g.getStrokesCount();i++)
+					{
+						stroke.add(g.getStrokes().get(i).points);
+					}
+					library.put(name,stroke);
 					Toast.makeText(getApplicationContext(), "class "+name+" successfully added to the library",Toast.LENGTH_SHORT).show();
 					list.clear();
 					list.addAll(library.keySet());
@@ -203,7 +208,7 @@ public class MainActivity extends Activity {
 					long arg3) {
 				
 				String temp=list.get(arg2);
-				Gesture tp=library.get(temp);
+				ArrayList<float[]> tp=library.get(temp);
 				Paint pt=new Paint();
 				pt.setStrokeWidth(4);
 				//
@@ -212,12 +217,12 @@ public class MainActivity extends Activity {
 		        //
 				Bitmap bp=Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
 				Canvas ct=new Canvas(bp);
-				for(int i=0;i<tp.getStrokesCount();i++)
+				for(int i=0;i<tp.size();i++)
 				{
-        	 		Path p=tp.getStrokes().get(i).getPath();
+        	 		//Path p=tp.getStrokes().get(i).getPath();
         	 		pt.setColor(colors[i]);
         	 		pt.setStyle(Style.STROKE);
-        	 		ct.drawPath(p, pt);
+        	 		ct.drawPoints(tp.get(i),pt);
 				}
          	
 				bg.setImageBitmap(bp);
